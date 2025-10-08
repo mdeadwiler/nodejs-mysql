@@ -12,13 +12,39 @@ resource "aws_instance" "tf_ec2_instance" {
   associate_public_ip_address = true
   vpc_security_group_ids = [aws_security_group.tf_ec2_sg.id]
   key_name = "terraform-ec2"
-  
+  depends_on = [ aws_s3_object.otf_s3_object ]
+  #To run script as file("script.sh") from script file
+
+  user_data = <<-EOF
+    #!/bin/bash
+    
+    # Git clone
+    git clone https://github.com/mdeadwiler/nodejs-mysql.git /home/ubuntu/nodejs-mysql
+    cd /home/ubuntu/nodejs-mysql
+    
+    # Install nodejs
+    sudo apt update -y
+    sudo apt install -y nodejs npm
+    
+    # Edit env vars
+    echo "DB_HOST=" | sudo tee -a .env
+    echo "DB_USER=t" | sudo tee -a .env
+    echo "DB_PASS=" | sudo tee -a .env
+    echo "DB_NAME=nodejs-mysql" | sudo tee -a .env
+    echo "DB_Table_NAME=" | sudo tee -a .env
+    echo "PORT=" | sudo tee -a .env
+    
+    # Start server
+    npm install
+    EOF
+
+user_data_replace_on_change  = true
   tags = {
     Name = "Nodejs-server"
   }
 }
 
-# Security Group
+# Security Group - This is just to show I am using a security group for the EC2 instance. However, I would create a more secured security group for production.
 resource "aws_security_group" "tf_ec2_sg" {
   name        = "nodejs-server-sg"
   description = "Allow SSH and HTTP traffic"
@@ -53,9 +79,12 @@ resource "aws_security_group" "tf_ec2_sg" {
         protocol = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
-# Keep in mind as said earlier this isn't typcally best practices. This is for education purposes 
   tags = {
     Name = "Nodejs-server-sg"
   }
 }
 
+# output
+output "ec2_public_ip" {
+  value = "ssh -i ~/.ssh/terraform-ec2.pem ubuntu@${aws_instance.tf_ec2_instance.public_ip}"
+}
