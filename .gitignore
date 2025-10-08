@@ -3,4 +3,10 @@ node_modules/
 
 # dotenv environment variable files
 .env
+
+# Terraform
 terraform/.terraform/providers/registry.terraform.io/hashicorp/aws/6.15.0/darwin_amd64/terraform-provider-aws_v6.15.0_x5
+terraform/terraform.tfvars
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup

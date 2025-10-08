@@ -7,15 +7,48 @@
 */
 
 #  rds resource
-resource "aws_db_instance" "default" {
+resource "aws_db_instance" "tf-rds_instance" {
   allocated_storage    = 10
   db_name              = "kunal_demo"
+  identifier           = "nodejs-rds-mysql"
   engine               = "mysql"
   engine_version       = "8.0"
   instance_class       = "db.t3.micro"
-  username             = "foo"
-  password             = "foobarbaz"
+  username             = "admin"
+  password             = var.db_password
   parameter_group_name = "default.mysql8.0"
   skip_final_snapshot  = true
+  publicly_accessible = true
+  vpc_security_group_ids = [ aws_security_group.tf_rds_sg.id ]
 }
  
+ resource "aws_security_group" "tf_rds_sg" {
+vpc_id      = "vpc-0a55ff24d096fe43d"  # default VPC
+  name        = "allow_mysql"
+  description = "Allow MySQL traffic"
+  
+
+  ingress {
+        from_port = 3306
+        to_port = 3306
+        protocol = "tcp"
+        cidr_blocks = ["24.90.86.85/32"] # My local IP
+        security_groups = [aws_security_group.tf_ec2_sg.id] # allow from EC@ SG
+    }
+
+    
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+  tags = {
+    Name = "Nodejs-server-sg"
+  }
+ }
+
+# output
+# output "ec2_public_ip" {
+#   value = "ssh -i ~/.ssh/terraform-ec2.pem ubuntu@${aws_instance.tf_ec2_instance.public_ip}"
+# }

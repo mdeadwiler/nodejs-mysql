@@ -28,7 +28,7 @@ resource "aws_instance" "tf_ec2_instance" {
     
     # Edit env vars
     echo "DB_HOST=" | sudo tee -a .env
-    echo "DB_USER=t" | sudo tee -a .env
+    echo "DB_USER=" | sudo tee -a .env
     echo "DB_PASS=" | sudo tee -a .env
     echo "DB_NAME=nodejs-mysql" | sudo tee -a .env
     echo "DB_Table_NAME=" | sudo tee -a .env
