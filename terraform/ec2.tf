@@ -7,9 +7,10 @@
 */
 
 resource "aws_instance" "tf_ec2_instance" {
-  ami           = "4"
-  instance_type = "t3.micro"
-
+  ami           = "ami-0360c520857e3138f" # Ubuntu image
+  instance_type = "t2.micro"
+  associate_public_ip_address = true
+  key_name = "terraform-ec2"
   tags = {
     Name = "HelloWorld"
   }
