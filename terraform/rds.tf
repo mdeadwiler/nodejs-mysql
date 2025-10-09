@@ -7,7 +7,7 @@
 */
 
 #  rds resource
-resource "aws_db_instance" "tf-rds_instance" {
+resource "aws_db_instance" "tf_rds_instance" {
   allocated_storage    = 10
   db_name              = "kunal_demo"
   identifier           = "nodejs-rds-mysql"
@@ -43,12 +43,23 @@ vpc_id      = "vpc-0a55ff24d096fe43d"  # default VPC
         protocol = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
-  tags = {
-    Name = "Nodejs-server-sg"
-  }
+  
  }
 
+#  locals
+locals {
+    rds_endpoint = element(split(":", aws_db_instance.tf_rds_instance.endpoint), 0)
+}
+
 # output
-# output "ec2_public_ip" {
-#   value = "ssh -i ~/.ssh/terraform-ec2.pem ubuntu@${aws_instance.tf_ec2_instance.public_ip}"
-# }
+output "rds_endpoint" {
+  value = local.rds_endpoint
+}
+
+output "rds_username" {
+  value = aws_db_instance.tf_rds_instance.username
+}
+
+output "db_name" {
+  value = aws_db_instance.tf_rds_instance.db_name
+}
