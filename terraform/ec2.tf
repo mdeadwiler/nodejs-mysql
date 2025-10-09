@@ -48,7 +48,7 @@ user_data_replace_on_change  = true
 resource "aws_security_group" "tf_ec2_sg" {
   name        = "nodejs-server-sg"
   description = "Allow SSH and HTTP traffic"
-  vpc_id      = "vpc-0a55ff24d096fe43d"  # default VPC
+  vpc_id      = var.vpc_id
 
   ingress {
         description = "Allow TLS from VPC"

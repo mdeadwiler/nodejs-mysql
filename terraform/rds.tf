@@ -23,7 +23,7 @@ resource "aws_db_instance" "tf_rds_instance" {
 }
  
  resource "aws_security_group" "tf_rds_sg" {
-vpc_id      = "vpc-0a55ff24d096fe43d"  # default VPC
+vpc_id      = var.vpc_id
   name        = "allow_mysql"
   description = "Allow MySQL traffic"
   
@@ -32,7 +32,7 @@ vpc_id      = "vpc-0a55ff24d096fe43d"  # default VPC
         from_port = 3306
         to_port = 3306
         protocol = "tcp"
-        cidr_blocks = ["24.90.86.85/32"] # My local IP
+        cidr_blocks = [var.my_ip]
         security_groups = [aws_security_group.tf_ec2_sg.id] # allow from EC@ SG
     }
 
